@@ -1,13 +1,23 @@
 # MDQN Validation Tool
 Qualitative Validation tool for PyMDQN, MDQN and SocialMDQN projects
 
+
 ## Instalation
 
+(Optional) Environment setup:
+
 ```sh
-git clone git@github.com:JPedroBelo/mdqn-validation-tool.git
-cd mdqn-validation-tool
-conda create --name  mdqn python=3.8
-conda activate  mdqn
+python3 -m pip install --user --upgrade pip
+python3 -m pip install --user validation
+python3 -m venv validation
+source validation/bin/activate
+```
+
+Git Clone:
+
+```sh
+git clone git@github.com:JPedroBelo/validation_tool_socialdqn.git
+cd validation_tool_socialdqn
 pip install -r requirements.txt 
 ```
 ## Running 
