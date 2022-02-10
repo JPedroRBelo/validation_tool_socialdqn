@@ -41,19 +41,19 @@ theme = 'Topanga'
 
 NULL = -1
 ep = 0
-prefix_name = 'image_'
+prefix_name = 'gray'
 image_dir = 'ep'+str(ep)
 format_ext = '.png'
 
 
 
 save_location = 'answers'
-dqn_files = 'dqn_files'
+dqn_files = os.path.join('dataset','scores')
 result_file = 'answr'
 extension = '.npy'
 
 fullpath = os.path.join(dqn_files,image_dir, prefix_name)
-image_database = os.path.join('dataset','RGB', prefix_name)
+image_database = os.path.join('dataset','images','1', prefix_name)
 
 image_update_time = 100
 n_images = 8
@@ -84,7 +84,11 @@ pt_br = {
     "RESET": "Recomeçar",
     "SAVEPANEL": "Arquivo",
     "LOADFILE": "Carregar Arquivo: ",
-    "BROWSE": "Procurar"
+    "BROWSE": "Procurar",
+    "NOFACE": "Desconhecida",
+    "NEUTRAL":"Neutra",
+    "POSITIVE":"Positiva",
+    "NEGATIVE":"Negativa"
 }
 
 

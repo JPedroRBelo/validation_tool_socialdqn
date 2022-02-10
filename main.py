@@ -9,8 +9,10 @@ import config as cfg
 #Change this at config.py file
 lang = cfg.languages[cfg.lang]
 
-actions_ep=np.load(cfg.dqn_files+'/action_history.npy')
+actions_ep=np.load(cfg.dqn_files+'/action_reward_history.npy')
+emotion_ep=np.load(cfg.dqn_files+'/social_signals_history.npy')
 asset = [lang['WAIT'],lang['LOOK'],lang['WAVE'],lang['HANDSHAKE']]
+emot_asset = [lang['NOFACE'],lang['NEUTRAL'],lang['POSITIVE'],lang['NEGATIVE']]
 dictAssets = dict(zip(asset, range(len(asset))))
 
 n_steps = cfg.validation_size
@@ -68,6 +70,7 @@ def make_layout(sg):
 	panel_quest = sg.Frame(
 				layout=[
 					[sg.Text(lang['DQNSELECTEDACTION']),sg.Text("",size=(10,1),key="-ROBOTACTION-",text_color="white",background_color="green",justification='c')],
+					[sg.Text(lang['DQNSELECTEDACTION']),sg.Text("",size=(10,1),key="-HUMANEMOTION-",text_color="white",background_color="blue",justification='c')],
 					[sg.Text(lang['DOYOUAGREE'])],
 					[sg.Radio(lang['YES'], "RADIOAGREE",key="-YES-", size=(10, 2))],						 
 					[sg.Radio(lang['NO'], "RADIOAGREE",key="-NO-")],
@@ -172,7 +175,7 @@ def main():
 			if(user_actions[step_image-1]==cfg.NULL):
 				clear_radion_selections(window)
 				show_choose_menu(window,False)
-			elif(actions_ep[step_image-1]==user_actions[step_image-1]):
+			elif(actions_ep[step_image-1][0]==user_actions[step_image-1]):
 				window.FindElement('-YES-').Update(value=True)
 				clear_radion_selections
 			else:
@@ -184,7 +187,7 @@ def main():
 				elif(user_actions[step_image-1]==dictAssets[lang['WAVE']]):
 					window.FindElement('-WAVE-').Update(value=True)
 				elif(user_actions[step_image-1]==dictAssets[lang['HANDSHAKE']]):
-					window.FindElement('-HANDSHAKE-').Update(value=True)
+					window.FindElement('-HAND-').Update(value=True)
 			print(user_actions[step_image-1])
 		if event == "-SAVE-":
 			file=values['-INPUT-']
@@ -193,18 +196,18 @@ def main():
 
 		if values["-YES-"]:
 			#handshake index
-			user_actions[step_image-1] = actions_ep[step_image-1]
+			user_actions[step_image-1] = int(actions_ep[step_image-1][0])
 			
 
 		if values["-NO-"]:
 			exclude_key = None
-			if(actions_ep[step_image-1]==dictAssets[lang['WAIT']]):
+			if(actions_ep[step_image-1][0]==dictAssets[lang['WAIT']]):
 				exclude_key = '-WAIT-'
-			if(actions_ep[step_image-1]==dictAssets[lang['LOOK']]):
+			if(actions_ep[step_image-1][0]==dictAssets[lang['LOOK']]):
 				exclude_key = '-LOOK-'
-			if(actions_ep[step_image-1]==dictAssets[lang['WAVE']]):
+			if(actions_ep[step_image-1][0]==dictAssets[lang['WAVE']]):
 				exclude_key = '-WAVE-'
-			if(actions_ep[step_image-1]==dictAssets[lang['HANDSHAKE']]):
+			if(actions_ep[step_image-1][0]==dictAssets[lang['HANDSHAKE']]):
 				exclude_key = '-HAND-'
 
 			show_choose_menu(window,True,exclude_key)
@@ -229,7 +232,8 @@ def main():
 
 		#Update image
 		elapsed_time = get_time()-last_update_time
-		window["-ROBOTACTION-"].update( asset[actions_ep[step_image-1]])
+		window["-ROBOTACTION-"].update( asset[int(actions_ep[step_image-1][0])])
+		window["-HUMANEMOTION-"].update( emot_asset[int(emotion_ep[step_image-1])])
 
 		if(elapsed_time>cfg.image_update_time):
 			filename = cfg.image_database+str(step_image)+'_'+str(index_image)+cfg.format_ext
