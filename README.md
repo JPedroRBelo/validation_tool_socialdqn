@@ -25,7 +25,7 @@ Dataset download:
 
 https://drive.google.com/file/d/1tE6C8wkGdQqbmqLJsLCSMH9rkTG5sIcw/view?usp=sharing
 
-Unzip to `validation_toolsocialdqn`
+Unzip to `validation_tool_socialdqn`
 
 ## Running 
 
