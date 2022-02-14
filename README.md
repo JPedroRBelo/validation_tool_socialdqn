@@ -20,6 +20,12 @@ git clone git@github.com:JPedroBelo/validation_tool_socialdqn.git
 cd validation_tool_socialdqn
 pip install -r requirements.txt 
 ```
+
+Dataset download:
+
+https://drive.google.com/file/d/1tE6C8wkGdQqbmqLJsLCSMH9rkTG5sIcw/view?usp=sharing
+Unzip to 'validation_toolsocialdqn'
+
 ## Running 
 
 ```sh
