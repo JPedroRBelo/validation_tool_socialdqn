@@ -53,7 +53,7 @@ result_file = 'answr'
 extension = '.npy'
 
 fullpath = os.path.join(dqn_files,image_dir, prefix_name)
-image_database = os.path.join('dataset','images','1', prefix_name)
+image_database = os.path.join('dataset','images','2', prefix_name)
 
 image_update_time = 100
 n_images = 8
@@ -62,7 +62,8 @@ n_images = 8
 
 pt_br = {
     "DQNSELECTEDACTION": "Ação selecionada pela DQN: ",
-    "DOYOUAGREE": "Você concorda com esta seleção?",    
+    "AVATAREMOTION": "Emoção humana: ",
+    "DOYOUAGREE": "Esta ação é aceitável no cenário apresentado?",    
     "YES" : "Sim",
     "NO" : "Não",
     "CHOOSERIGHTACTION": "Selecione a ação adequada: ",
@@ -77,7 +78,9 @@ pt_br = {
     "STEP": "Interação: ",
     "INDEX": "Índice: ",
     "LABEL": "Resumo",
+    "EMOTION_LABEL": "Probabilidade do humano interagir",
     "ACTIONS": "Esperar:\t\t não faz nada.\nOlhar:\t\t olha para pessoa.\nAcenar:\t\t acena com a mão para pessoa mais próxima.\nCumprimentar:\t tenta cumprimentar com um aperto de mão.",
+    "EMOTIONS_HELP": "Feliz: alta probabilidade de interação\nTriste: pouca probabilidade de interação.\nNeutra: Probabilidade de interação média. \nDesconhecida: humano não presente na cena ou rosto não visível.",
     "FILENAME": "Salvar como: ",
     "SAVE": "Salvar",
     "LOAD": "Carregar",
@@ -87,13 +90,14 @@ pt_br = {
     "BROWSE": "Procurar",
     "NOFACE": "Desconhecida",
     "NEUTRAL":"Neutra",
-    "POSITIVE":"Positiva",
-    "NEGATIVE":"Negativa"
+    "POSITIVE":"Feliz",
+    "NEGATIVE":"Triste"
 }
 
 
 en_us = {
     "DQNSELECTEDACTION": "DQN selected Action: ",
+    "AVATAREMOTION": "Human Avatar Emotion: ",
     "DOYOUAGREE": "Do you agree with DQN?" ,  
     "YES" : "Yes",
     "NO" : "No",    

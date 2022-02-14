@@ -9,8 +9,7 @@ import config as cfg
 #Change this at config.py file
 lang = cfg.languages[cfg.lang]
 
-actions_ep=np.load(cfg.dqn_files+'/action_reward_history.npy')
-emotion_ep=np.load(cfg.dqn_files+'/social_signals_history.npy')
+
 asset = [lang['WAIT'],lang['LOOK'],lang['WAVE'],lang['HANDSHAKE']]
 emot_asset = [lang['NOFACE'],lang['NEUTRAL'],lang['POSITIVE'],lang['NEGATIVE']]
 dictAssets = dict(zip(asset, range(len(asset))))
@@ -70,7 +69,7 @@ def make_layout(sg):
 	panel_quest = sg.Frame(
 				layout=[
 					[sg.Text(lang['DQNSELECTEDACTION']),sg.Text("",size=(10,1),key="-ROBOTACTION-",text_color="white",background_color="green",justification='c')],
-					[sg.Text(lang['DQNSELECTEDACTION']),sg.Text("",size=(10,1),key="-HUMANEMOTION-",text_color="white",background_color="blue",justification='c')],
+					[sg.Text(lang['AVATAREMOTION']),sg.Text("",size=(10,1),key="-HUMANEMOTION-",text_color="white",background_color="blue",justification='c')],
 					[sg.Text(lang['DOYOUAGREE'])],
 					[sg.Radio(lang['YES'], "RADIOAGREE",key="-YES-", size=(10, 2))],						 
 					[sg.Radio(lang['NO'], "RADIOAGREE",key="-NO-")],
@@ -96,6 +95,14 @@ def make_layout(sg):
 					relief=sg.RELIEF_SUNKEN,
 				)
 
+	panel_emotion_help = sg.Frame(
+				layout=[
+					[sg.Text(lang['EMOTIONS_HELP'])],
+				], 
+				title=lang['EMOTION_LABEL'],					 
+				relief=sg.RELIEF_SUNKEN,
+			)
+
 	panel_file = sg.Frame(
 					layout=[
 						[sg.Submit(lang['LOAD'],key="-LOAD-",disabled=False),
@@ -109,17 +116,30 @@ def make_layout(sg):
 
 	layout = [
 		[panel_image, panel_quest],
-		[panel_help]
+		[panel_help,panel_emotion_help]
 		
 	]
-	window = sg.Window(lang['APPTITLE'], layout,size=(1024, 650))
+	window = sg.Window(lang['APPTITLE'], layout,size=(1024, 768),finalize=True)
 	return window
 
 def main():
 	sg.theme(cfg.theme)
-
+	actions_ep=np.load(cfg.dqn_files+'/100_action_reward_history.npy')
+	emotion_ep=np.load(cfg.dqn_files+'/100_social_signals_history.npy')
 
 	window = make_layout(sg)
+	window.bind('<Key-Y>', 'Y')
+	window.bind('<Key-y>', 'y')
+	window.bind('<Key-N>', 'N')
+	window.bind('<Key-n>', 'n')
+	window.bind('<Key-1>', '1')
+	window.bind('<Key-2>', '2')
+	window.bind('<Key-3>', '3')
+	window.bind('<Key-4>', '4')
+	window.bind('<Key-F5>', 'F5')
+	window.bind('<Key-Right>', 'Right')
+	window.bind('<Key-Left>', 'Left')
+
 
 	
 	#x = threading.Thread(target=update_window_image, args=(window,))
@@ -147,13 +167,18 @@ def main():
 		#disable NEXT/PREV buttons if nothing is selected
 		disabled_buttons = bool((user_actions[step_image-1]==cfg.NULL))
 
-		window['-PREV-'].Update(disabled=disabled_buttons)
+		
 		window['-NEXT-'].Update(disabled=disabled_buttons)
-
+		disabled_buttons = bool((user_actions[step_image-1-1]==cfg.NULL))
+		window['-PREV-'].Update(disabled=disabled_buttons)
 
 		loadfile_test = os.path.isfile(values['-LOADINPUT-'])
 		window['-LOAD-'].Update(disabled=not loadfile_test)
 
+		if event == 'Right':
+			window['-NEXT-'].click()
+		if event == 'Left':
+			window['-PREV-'].click()
 
 
 		if event == "-PREV-" or event == "-NEXT-" or event == "-LOAD-":
@@ -161,11 +186,11 @@ def main():
 
 			if event =="-PREV-":
 				add = -1
-			step_image = ((step_image+add)%(n_steps))
+			step_image = ((step_image+add)%(n_steps+1))
 			#Verify if index equals to 0
 			##True: aditional increment operation
 			if(step_image==0):
-				step_image = ((step_image+add)%(n_steps))
+				step_image = ((step_image+add)%(n_steps+1))
 			index_image = 1
 
 			if event == "-LOAD-":
@@ -193,6 +218,12 @@ def main():
 			file=values['-INPUT-']
 			np.save(file, user_actions)
 
+		if event == 'Y' or event == 'y':
+			window.FindElement('-YES-').Update(value=True)
+			#user_actions[step_image-1] = int(actions_ep[step_image-1][0])
+
+		if event == 'N' or event == 'n':
+			window.FindElement('-NO-').Update(value=True)
 
 		if values["-YES-"]:
 			#handshake index
@@ -211,6 +242,17 @@ def main():
 				exclude_key = '-HAND-'
 
 			show_choose_menu(window,True,exclude_key)
+
+
+			if event == '1':
+				window.FindElement('-WAIT-').Update(value=True)
+			if event == '2':
+				window.FindElement('-LOOK-').Update(value=True)
+			if event == '3':
+				window.FindElement('-WAVE-').Update(value=True)
+			if event == '4':
+				window.FindElement('-HAND-').Update(value=True)
+
 
 			if values["-WAIT-"]:
 				user_actions[step_image-1] = dictAssets[lang['WAIT']]
