@@ -44,9 +44,12 @@ def calc(dqn_actions):
 			aux.append(0)
 		c_matrix.append(aux)
 
-	an1=np.load(folder+'answr500.npy')
-	an2=np.load(folder+'answr500.npy')
-	an3=np.load(folder+'answr500.npy')
+	#an1=np.load(folder+'100_answr500.npy')
+	#an2=np.load(folder+'100_answr500.npy')
+	#an3=np.load(folder+'100_answr500.npy')
+	an1=np.load(folder+'100_answers.npy')
+	an2=np.load(folder+'100_answers.npy')
+	an3=np.load(folder+'100_answers.npy')
 	#an2=np.load(folder+'padula.npy')
 	#an3=np.load(folder+'iury.npy')
 	an1 = an1[:-1]
@@ -70,8 +73,8 @@ def calc(dqn_actions):
 
 	for i,p,j,d in zip(an1,an2,an3,dqn_actions[:len(an1)]):
 		robot_action = action(d[0])[0]
-		#import random
-		#robot_action =assets[random.randint(0, 3)]
+		import random
+		robot_action =assets[random.randint(0, 3)]
 
 		actions = action(i,p,j)
 		most_common = collections.Counter(actions).most_common(1)[0][0]
@@ -79,6 +82,7 @@ def calc(dqn_actions):
 		human = action_index(most_common)
 		h_index = int(human)
 		r_index = int(d[0])
+		#r_index = int(random.randint(0, 3))
 		true_label.append(h_index)
 		pred_label.append(r_index)
 		c_matrix[h_index][r_index] += 1
@@ -146,7 +150,8 @@ def plot_confusion_matrix(df_confusion, title='Confusion matrix', cmap=plt.cm.gr
     plt.ylabel(df_confusion.index.name)
     plt.xlabel(df_confusion.columns.name)
     plt.show()
-
+def Average(lst):
+    return sum(lst) / len(lst)
 
 
 def main():
@@ -158,7 +163,7 @@ def main():
 	for ep in range(1):
 		print("Ep: "+str(ep))
 		#dqn_actions = np.load('mdqn/results2/ep'+str(ep)+'/action_history.npy')
-		dqn_actions = np.load('dataset/scores/action_reward_history.npy')
+		dqn_actions = np.load('dataset/scores/100_action_reward_history.npy')
 		wt_acc, lk_acc, wv_acc, hs_acc, geral_acc,true_label,pred_label = calc(dqn_actions)
 		print("Wait Accuracy:\t\t ",wt_acc)
 		print("Look Accuracy:\t\t ",lk_acc)
@@ -187,6 +192,7 @@ def main():
 		#df_conf_norm = df_confusion / df_confusion.sum(axis=1)
 		#plot_confusion_matrix(df_confusion)
 		from sklearn.metrics import precision_recall_fscore_support as score
+		from sklearn.metrics import accuracy_score as a_score
 		FP = confusion_matrix.sum(axis=0) - np.diag(confusion_matrix)  
 		FN = confusion_matrix.sum(axis=1) - np.diag(confusion_matrix)
 		TP = np.diag(confusion_matrix)
@@ -195,12 +201,18 @@ def main():
 		#print(FN)
 		#print(TP)
 		#print(TN)
+		Precision_Score = TP / (FP + TP)
+		Accuracy_Score = (TP + TN)/ (TP + FN + TN + FP)
 
+		print('accuracy {}\n accuracy mean {}'.format(Accuracy_Score,Accuracy_Score.mean()))
+		print('precision {}\n precision mean {}'.format(Precision_Score,Precision_Score.mean()))
 		precision, recall, fscore, support = score(true_label, pred_label)
-
+		accuracy = a_score(true_label,pred_label)
+		#print(Accuracy_Score)
+		print('accuracy: {}'.format(accuracy))
 		print('precision: {}'.format(precision))
 		print('recall: {}'.format(recall))
-		print('fscore: {}'.format(fscore))
+		print('fscore: {} \n Average fscore {}'.format(fscore,Average(fscore)))
 		print('support: {}'.format(support))
 
 

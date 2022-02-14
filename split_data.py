@@ -34,48 +34,53 @@ def accuracy(success,fail):
     else:
         return 0
 
+lenn = cfg.validation_size
+factor = lenn/100
 
-probs = [0.1008,0.3246,0.1968,0.5319]
+probs = [0.1008*factor,0.3246*factor,0.1968*factor,0.5319*factor]
 
 def calc(dqn_actions):
 
+    while(True):
+        actions_ep=np.load(cfg.dqn_files+'/action_reward_history.npy')
+        emotion_ep=np.load(cfg.dqn_files+'/social_signals_history.npy')
+        an1=np.load(folder+'answr500.npy')   
+        an1 = an1[:-1]
+        selected = []
+        new_action_reward = []
+        new_emotion_ep = []
+        new_human_answer = []
+        new_images = []
+        for i in range(len(an1)):
+            robot_action = int(dqn_actions[i][0])
+            human_action = int(an1[i])
+            #import random
+            #robot_action =assets[random.randint(0, 3)]
+            value = random.random()
+            rand = random.random()
+            aux = -1
+            if(value>0.5):
+                if(rand<=probs[robot_action]):
+                    aux = i
+            else:
+                if(rand<=probs[human_action]):
+                    aux = i
 
-    actions_ep=np.load(cfg.dqn_files+'/action_reward_history.npy')
-    emotion_ep=np.load(cfg.dqn_files+'/social_signals_history.npy')
-    an1=np.load(folder+'answr500.npy')   
-    an1 = an1[:-1]
-    selected = []
-    new_action_reward = []
-    new_emotion_ep = []
-    new_human_answer = []
-    new_images = []
-    for i in range(len(an1)):
-        robot_action = int(dqn_actions[i][0])
-        human_action = int(an1[i])
-        #import random
-        #robot_action =assets[random.randint(0, 3)]
-        value = random.random()
-        rand = random.random()
-        aux = -1
-        if(value>0.5):
-            if(rand<=probs[robot_action]):
-                aux = i
-        else:
-            if(rand<=probs[human_action]):
-                aux = i
+            if(aux>=0):
+                selected.append(aux)
 
-        if(aux>=0):
-            selected.append(aux)
+        if(len(selected)>=lenn):
+            break
 
 
 
+            #h_index = int(human)
+            #r_index = int(d[0])
 
-        #h_index = int(human)
-        #r_index = int(d[0])
     print(len(selected))
     ans = input("Confirm? ")
     if(ans=="y"):
-        for i in range(min(100,len(selected))):
+        for i in range(min(lenn,len(selected))):
             index = selected[i]
             new_action_reward.append(actions_ep[index])
             new_emotion_ep.append(emotion_ep[index])
