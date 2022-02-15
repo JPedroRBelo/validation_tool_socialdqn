@@ -10,7 +10,7 @@ from sklearn.metrics import confusion_matrix
 folder = 'answers/'
 
 
-dqn_actions = np.load('dataset/scores/action_reward_history.npy')
+#dqn_actions = np.load('dataset/scores/action_reward_history.npy')
 assets = ['Wait','Look','Wave','Handshake','None']
 
 
@@ -73,8 +73,8 @@ def calc(dqn_actions):
 
 	for i,p,j,d in zip(an1,an2,an3,dqn_actions[:len(an1)]):
 		robot_action = action(d[0])[0]
-		import random
-		robot_action =assets[random.randint(0, 3)]
+		#import random
+		#robot_action =assets[random.randint(0, 3)]
 
 		actions = action(i,p,j)
 		most_common = collections.Counter(actions).most_common(1)[0][0]
@@ -85,11 +85,11 @@ def calc(dqn_actions):
 		#r_index = int(random.randint(0, 3))
 		true_label.append(h_index)
 		pred_label.append(r_index)
-		c_matrix[h_index][r_index] += 1
+		#c_matrix[h_index][r_index] += 1
 
 
 
-
+		'''
 		if(most_common==robot_action):
 			hit += 1
 		else:
@@ -133,9 +133,10 @@ def calc(dqn_actions):
 
 
 	#print(table) 
+	'''
 
-
-	return accuracy(wt_hit,wt_fail),accuracy(lk_hit,lk_fail),accuracy(wv_hit,wv_fail),v_hs_acc[-1],accuracy(hit,fail),true_label,pred_label
+	#return accuracy(wt_hit,wt_fail),accuracy(lk_hit,lk_fail),accuracy(wv_hit,wv_fail),v_hs_acc[-1],accuracy(hit,fail),true_label,pred_label
+	return true_label, pred_label
 
 
 
@@ -153,6 +154,10 @@ def plot_confusion_matrix(df_confusion, title='Confusion matrix', cmap=plt.cm.gr
 def Average(lst):
     return sum(lst) / len(lst)
 
+def padronizar(listdf):
+	aux_df = [element * 100 for element in listdf]
+	aux_df = [ '%.2f%%' % element for element in aux_df ]
+	return aux_df
 
 def main():
 	v_wt = []
@@ -161,10 +166,17 @@ def main():
 	v_hs = []
 	v_geral = []
 	for ep in range(1):
+		
 		print("Ep: "+str(ep))
 		#dqn_actions = np.load('mdqn/results2/ep'+str(ep)+'/action_history.npy')
 		dqn_actions = np.load('dataset/scores/100_action_reward_history.npy')
-		wt_acc, lk_acc, wv_acc, hs_acc, geral_acc,true_label,pred_label = calc(dqn_actions)
+		#dqn_actions = np.load('dataset/scores/test_action_reward_history.npy')
+		print(dqn_actions)
+		#wt_acc, lk_acc, wv_acc, hs_acc, geral_acc,true_label,pred_label = calc(dqn_actions)
+		true_label,pred_label = calc(dqn_actions)
+		print(len(dqn_actions))
+
+		'''
 		print("Wait Accuracy:\t\t ",wt_acc)
 		print("Look Accuracy:\t\t ",lk_acc)
 		print("Wave Accuracy:\t\t ",wv_acc)
@@ -183,6 +195,7 @@ def main():
 		v_wv.append(wv_acc)
 		v_hs.append(hs_acc)
 		v_geral.append(geral_acc)
+		'''
 
 		import pandas as pd
 		y_actu = pd.Series(true_label, name='Actual')
@@ -203,6 +216,38 @@ def main():
 		#print(TN)
 		Precision_Score = TP / (FP + TP)
 		Accuracy_Score = (TP + TN)/ (TP + FN + TN + FP)
+		Recall_Score = TP / (FN + TP)
+		F1_Score = 2* Precision_Score * Recall_Score/ (Precision_Score + Recall_Score)
+		df_scores = pd.DataFrame(columns = ["Accuracy","Precision","Recall","Fscore",],index=["Wait","Look","Wave","Handshake","General"])
+
+		aux_df = Accuracy_Score.values.tolist()
+		aux_df.append(Accuracy_Score.mean())
+
+		df_scores["Accuracy"] = padronizar(aux_df)
+
+		aux_df = Precision_Score.values.tolist()
+		aux_df.append(Precision_Score.mean())
+		df_scores["Precision"] = padronizar(aux_df)
+
+		aux_df = Recall_Score.values.tolist()
+		aux_df.append(Recall_Score.mean())
+		df_scores["Recall"] = padronizar(aux_df)
+
+		aux_df = F1_Score.values.tolist()
+		aux_df.append(F1_Score.mean())
+		df_scores["Fscore"] = padronizar(aux_df)
+
+
+
+
+
+
+
+		print(df_scores.to_string(index=False))
+
+
+
+		'''
 
 		print('accuracy {}\n accuracy mean {}'.format(Accuracy_Score,Accuracy_Score.mean()))
 		print('precision {}\n precision mean {}'.format(Precision_Score,Precision_Score.mean()))
@@ -214,7 +259,7 @@ def main():
 		print('recall: {}'.format(recall))
 		print('fscore: {} \n Average fscore {}'.format(fscore,Average(fscore)))
 		print('support: {}'.format(support))
-
+		'''
 
 		#print(c_matrix)	
 
