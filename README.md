@@ -22,8 +22,7 @@ pip install -r requirements.txt
 ```
 
 Dataset download:
-
-https://drive.google.com/file/d/1tE6C8wkGdQqbmqLJsLCSMH9rkTG5sIcw/view?usp=sharing
+https://drive.google.com/file/d/1rQ18camSptGNZmwlF7e7VPxpS-GCOWKH/view?usp=sharing
 
 Unzip to `validation_tool_socialdqn`
 
