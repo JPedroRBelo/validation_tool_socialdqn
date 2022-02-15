@@ -32,7 +32,7 @@ themes = [
 'Topanga']
 
 
-validation_size = 150
+validation_size = 100
 
 theme = 'Topanga'
 #theme = 'DarkAmber'
