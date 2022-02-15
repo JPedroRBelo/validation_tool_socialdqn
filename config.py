@@ -61,7 +61,7 @@ n_images = 8
 
 
 pt_br = {
-    "DQNSELECTEDACTION": "Ação selecionada pela DQN: ",
+    "DQNSELECTEDACTION": "Ação selecionada pelo Robô: ",
     "AVATAREMOTION": "Emoção humana: ",
     "DOYOUAGREE": "Esta ação é aceitável no cenário apresentado?",    
     "YES" : "Sim",

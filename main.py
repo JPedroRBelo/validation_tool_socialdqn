@@ -68,8 +68,8 @@ def make_layout(sg):
 
 	panel_quest = sg.Frame(
 				layout=[
-					[sg.Text(lang['DQNSELECTEDACTION']),sg.Text("",size=(20,1),key="-ROBOTACTION-",text_color="white",background_color="green",justification='c')],
 					[sg.Text(lang['AVATAREMOTION']),sg.Text("",size=(20,1),key="-HUMANEMOTION-",text_color="white",background_color="blue",justification='c')],
+					[sg.Text(lang['DQNSELECTEDACTION']),sg.Text("",size=(20,1),key="-ROBOTACTION-",text_color="white",background_color="green",justification='c')],					
 					[sg.Text(lang['DOYOUAGREE'])],
 					[sg.Radio(lang['YES'], "RADIOAGREE",key="-YES-", size=(10, 2))],						 
 					[sg.Radio(lang['NO'], "RADIOAGREE",key="-NO-")],
@@ -289,7 +289,7 @@ def main():
 				window["-IMAGE-"].update(data=bio.getvalue())
 				window["-NAMEIMAGE-"].update(lang["STEP"]+' '+str(step_image)+' - '+lang["INDEX"]+' '+str(index_image))
 			# apply mod to keep index betw. 0 and 7; sum up 1
-			index_image = ((index_image)%(cfg.n_images))+1
+			index_image = ((index_image+1)%(cfg.n_images))
 			last_update_time = get_time()
 
 		
