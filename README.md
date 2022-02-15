@@ -21,11 +21,6 @@ cd validation_tool_socialdqn
 pip install -r requirements.txt 
 ```
 
-Dataset download:
-https://drive.google.com/file/d/1rQ18camSptGNZmwlF7e7VPxpS-GCOWKH/view?usp=sharing
-
-Unzip to `validation_tool_socialdqn`
-
 ## Running 
 
 ```sh
