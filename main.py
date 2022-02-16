@@ -245,7 +245,7 @@ def main():
 
 			show_choose_menu(window,True,exclude_key)
 
-
+			'''
 			if event == '1':
 				window.FindElement('-WAIT-').Update(value=True)
 			if event == '2':
@@ -254,7 +254,7 @@ def main():
 				window.FindElement('-WAVE-').Update(value=True)
 			if event == '4':
 				window.FindElement('-HAND-').Update(value=True)
-
+			'''
 
 			if values["-WAIT-"]:
 				user_actions[step_image-1] = dictAssets[lang['WAIT']]
