@@ -1,11 +1,15 @@
 import numpy as np
-
+import argparse
 import matplotlib.pyplot as plt
 import os
 import time
 import io
 import collections
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import precision_recall_fscore_support as score
+from sklearn.metrics import accuracy_score as a_score
+import pandas as pd
+import config as cfg
 
 folder = 'answers/'
 
@@ -13,7 +17,10 @@ folder = 'answers/'
 #dqn_actions = np.load('dataset/scores/action_reward_history.npy')
 assets = ['Wait','Look','Wave','Handshake','None']
 
-
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Process command line arguments.')
+    parser.add_argument('-a','--alg',default='greedy')
+    return parser.parse_args()
 def action(*args):
 	actions = []
 	for a in args:
@@ -34,123 +41,26 @@ def accuracy(success,fail):
 
 
 
-def calc(dqn_actions):
+def calc(dqn_actions,human_actions):
 
-	c_len = len(assets)
-	c_matrix = []
-	for i in range(c_len-1):
-		aux = []
-		for j in range(c_len-1):
-			aux.append(0)
-		c_matrix.append(aux)
+	size = cfg.validation_size
+	human_anwers = np.transpose(human_actions)
 
-	#an1=np.load(folder+'100_answr500.npy')
-	#an2=np.load(folder+'100_answr500.npy')
-	#an3=np.load(folder+'100_answr500.npy')
-	an1=np.load(folder+'100_answers.npy')
-	an2=np.load(folder+'100_answers.npy')
-	an3=np.load(folder+'100_answers.npy')
-	#an2=np.load(folder+'padula.npy')
-	#an3=np.load(folder+'iury.npy')
-	an1 = an1[:-1]
-	an2 = an2[:-1]
-	an3 = an3[:-1]
-	hit = 0
-	fail = 0
-	wt_hit = 0
-	wt_fail = 0
-	lk_hit = 0
-	lk_fail = 0
-	wv_hit = 0
-	wv_fail = 0
-	hs_hit = 0
-	hs_fail = 0
-
-	v_hs_acc = []
 	true_label = []
 	pred_label = []
 
-
-	for i,p,j,d in zip(an1,an2,an3,dqn_actions[:len(an1)]):
-		robot_action = action(d[0])[0]
-		#import random
-		#robot_action =assets[random.randint(0, 3)]
-
-		actions = action(i,p,j)
-		most_common = collections.Counter(actions).most_common(1)[0][0]
-		
-		human = action_index(most_common)
+	for i in range(size):
+		robot = dqn_actions[i]
+		if not isinstance(human_anwers[i],np.float64):
+			human = collections.Counter(human_anwers[i]).most_common(1)[0][0]
+		else: 
+			human = human_anwers[i]
 		h_index = int(human)
-		r_index = int(d[0])
-		#r_index = int(random.randint(0, 3))
+		r_index = int(robot[0])
 		true_label.append(h_index)
 		pred_label.append(r_index)
-		#c_matrix[h_index][r_index] += 1
-
-
-
-		'''
-		if(most_common==robot_action):
-			hit += 1
-		else:
-			fail += 1
-
-		if(robot_action=='Wait'):
-
-			if most_common==robot_action:
-				wt_hit += 1
-			else:
-				wt_fail += 1
-		if(robot_action=='Look'):
-
-			if most_common==robot_action:
-				lk_hit += 1
-			else:
-				lk_fail += 1
-
-		if(robot_action=='Wave'):
-
-			if most_common==robot_action:
-				wv_hit += 1
-			else:
-				wv_fail += 1
-		if(robot_action=='Handshake'):
-
-			if most_common==robot_action:
-				hs_hit += 1
-			else:
-				hs_fail += 1
-
-	v_hs_acc.append(accuracy(hs_hit,hs_fail))
-	table = ''
-	for i in range(len(c_matrix)):
-		for j in range(len(c_matrix[i])):
-			table += str(c_matrix[j][i])+" "
-		table += "\n"
-
-
-
-
-
-	#print(table) 
-	'''
-
-	#return accuracy(wt_hit,wt_fail),accuracy(lk_hit,lk_fail),accuracy(wv_hit,wv_fail),v_hs_acc[-1],accuracy(hit,fail),true_label,pred_label
 	return true_label, pred_label
 
-
-
-def plot_confusion_matrix(df_confusion, title='Confusion matrix', cmap=plt.cm.gray_r):
-    plt.matshow(df_confusion, cmap=cmap) # imshow
-    #plt.title(title)
-    plt.colorbar()
-    tick_marks = np.arange(len(df_confusion.columns))
-    plt.xticks(tick_marks, df_confusion.columns, rotation=45)
-    plt.yticks(tick_marks, df_confusion.index)
-    #plt.tight_layout()
-    plt.ylabel(df_confusion.index.name)
-    plt.xlabel(df_confusion.columns.name)
-    plt.show()
 def Average(lst):
     return sum(lst) / len(lst)
 
@@ -159,123 +69,107 @@ def padronizar(listdf):
 	aux_df = [ '%.2f%%' % element for element in aux_df ]
 	return aux_df
 
-def main():
-	v_wt = []
-	v_lk = []
-	v_wv = []
-	v_hs = []
-	v_geral = []
-	for ep in range(1):
-		
-		print("Ep: "+str(ep))
-		#dqn_actions = np.load('mdqn/results2/ep'+str(ep)+'/action_history.npy')
-		dqn_actions = np.load('dataset/scores/100_action_reward_history.npy')
-		#dqn_actions = np.load('dataset/scores/test_action_reward_history.npy')
-		print(dqn_actions)
-		#wt_acc, lk_acc, wv_acc, hs_acc, geral_acc,true_label,pred_label = calc(dqn_actions)
-		true_label,pred_label = calc(dqn_actions)
-		print(len(dqn_actions))
+def analytics(human_anwers,dqn_actions,debug=False):
 
-		'''
-		print("Wait Accuracy:\t\t ",wt_acc)
-		print("Look Accuracy:\t\t ",lk_acc)
-		print("Wave Accuracy:\t\t ",wv_acc)
-		print("Handshake Accuracy:\t ",hs_acc)
 
-		print("General Accuracy:\t",geral_acc)
-		print("*********************************************")
-		print(wt_acc)
-		print(lk_acc)
-		print(wv_acc)
-		print(hs_acc)
-		print(geral_acc)
-		print("*********************************************")
-		v_wt.append(wt_acc)
-		v_lk.append(lk_acc)
-		v_wv.append(wv_acc)
-		v_hs.append(hs_acc)
-		v_geral.append(geral_acc)
-		'''
 
-		import pandas as pd
-		y_actu = pd.Series(true_label, name='Actual')
-		y_pred = pd.Series(pred_label, name='Predicted')
-		confusion_matrix = pd.crosstab(y_actu, y_pred)
+	#wt_acc, lk_acc, wv_acc, hs_acc, geral_acc,true_label,pred_label = calc(dqn_actions)
+	true_label,pred_label = calc(dqn_actions,human_anwers)
+
+
+
+	y_actu = pd.Series(true_label, name='Actual')
+	y_pred = pd.Series(pred_label, name='Predicted')
+	confusion_matrix = pd.crosstab(y_actu, y_pred)
+
+	if(debug):
 		print(confusion_matrix)
-		#df_conf_norm = df_confusion / df_confusion.sum(axis=1)
-		#plot_confusion_matrix(df_confusion)
-		from sklearn.metrics import precision_recall_fscore_support as score
-		from sklearn.metrics import accuracy_score as a_score
-		FP = confusion_matrix.sum(axis=0) - np.diag(confusion_matrix)  
-		FN = confusion_matrix.sum(axis=1) - np.diag(confusion_matrix)
-		TP = np.diag(confusion_matrix)
-		TN = confusion_matrix.values.sum() - (FP + FN + TP)
-		#print(FP)
-		#print(FN)
-		#print(TP)
-		#print(TN)
-		Precision_Score = TP / (FP + TP)
-		Accuracy_Score = (TP + TN)/ (TP + FN + TN + FP)
-		Recall_Score = TP / (FN + TP)
-		F1_Score = 2* Precision_Score * Recall_Score/ (Precision_Score + Recall_Score)
-		df_scores = pd.DataFrame(columns = ["Accuracy","Precision","Recall","Fscore",],index=["Wait","Look","Wave","Handshake","General"])
+		print('\n')
 
-		aux_df = Accuracy_Score.values.tolist()
-		aux_df.append(Accuracy_Score.mean())
+	FP = confusion_matrix.sum(axis=0) - np.diag(confusion_matrix)  
+	FN = confusion_matrix.sum(axis=1) - np.diag(confusion_matrix)
+	TP = np.diag(confusion_matrix)
+	TN = confusion_matrix.values.sum() - (FP + FN + TP)
+	#print(FP)
+	#print(FN)
+	#print(TP)
+	#print(TN)
+	Precision_Score = TP / (FP + TP)
+	Accuracy_Score = (TP + TN)/ (TP + FN + TN + FP)
+	Recall_Score = TP / (FN + TP)
+	F1_Score = 2* Precision_Score * Recall_Score/ (Precision_Score + Recall_Score)
+	df_scores = pd.DataFrame(columns = ["Accuracy","Prec.","Recall","Fscore",],index=["Wait","Look","Wave","Handshake","General"])
 
-		df_scores["Accuracy"] = padronizar(aux_df)
+	aux_df = Accuracy_Score.values.tolist()
+	aux_df.append(Accuracy_Score.mean())
 
-		aux_df = Precision_Score.values.tolist()
-		aux_df.append(Precision_Score.mean())
-		df_scores["Precision"] = padronizar(aux_df)
+	df_scores["Accuracy"] = aux_df#padronizar(aux_df)
 
-		aux_df = Recall_Score.values.tolist()
-		aux_df.append(Recall_Score.mean())
-		df_scores["Recall"] = padronizar(aux_df)
+	aux_df = Precision_Score.values.tolist()
+	aux_df.append(Precision_Score.mean())
+	df_scores["Prec."] = aux_df#padronizar(aux_df)
 
-		aux_df = F1_Score.values.tolist()
-		aux_df.append(F1_Score.mean())
-		df_scores["Fscore"] = padronizar(aux_df)
+	aux_df = Recall_Score.values.tolist()
+	aux_df.append(Recall_Score.mean())
+	df_scores["Recall"] = aux_df#padronizar(aux_df)
+
+	aux_df = F1_Score.values.tolist()
+	aux_df.append(F1_Score.mean())
+	df_scores["Fscore"] = aux_df#padronizar(aux_df)
 
 
+	return df_scores
 
 
+def standardize(df):
+	for column in df:
+	    
+		aux_df = [element * 100 for element in df[column]]
+		aux_df = [ '%.2f%%' % element for element in aux_df ]
+		df[column] = aux_df
+	return df
 
 
-
-		print(df_scores.to_string(index=False))
-
-
-
-		'''
-
-		print('accuracy {}\n accuracy mean {}'.format(Accuracy_Score,Accuracy_Score.mean()))
-		print('precision {}\n precision mean {}'.format(Precision_Score,Precision_Score.mean()))
-		precision, recall, fscore, support = score(true_label, pred_label)
-		accuracy = a_score(true_label,pred_label)
-		#print(Accuracy_Score)
-		print('accuracy: {}'.format(accuracy))
-		print('precision: {}'.format(precision))
-		print('recall: {}'.format(recall))
-		print('fscore: {} \n Average fscore {}'.format(fscore,Average(fscore)))
-		print('support: {}'.format(support))
-		'''
-
-		#print(c_matrix)	
+def main():
+	arguments = parse_arguments()
+	alg = arguments.alg
+	size = cfg.validation_size
 
 
-	plt.ylim([0, 1])
-	plt.ylabel('Accuracy')
-	plt.xlabel('Epoch')
-	plt.plot(v_wt,label='Wait')
-	plt.plot(v_lk,label='Look')
-	plt.plot(v_wv,label='Wave')
-	plt.plot(v_hs,label='Handshake')
-	plt.legend()
-	#plt.show()
+	#dqn_actions = np.load('mdqn/results2/ep'+str(ep)+'/action_history.npy')
+	if(alg=='greedy'):
+		dqn_actions = np.load('dataset/scores/100_action_reward_history.npy')
+	elif(alg=='noemotion'):
+		dqn_actions = np.load('dataset/scores/test_action_reward_history.npy')
+	else:
+		dqn_actions = np.random.random_integers(0,3, (size, 2)) 
+	human_anwers_files = []
+	names = []
+	for file in os.listdir(folder):
+		if file.endswith(".npy"):
+			human_anwers_files.append(np.array(np.load(os.path.join(folder, file)))[:size])
+			names.append(file)
 
+	human_anwers= np.array(human_anwers_files)
+	df_array = []
+	for ha,hf  in zip(human_anwers,names):
+		print('\n*****************************')
+		print(hf)
+		print('*****')
+		df = analytics(ha,dqn_actions,debug=True)
+		print(df.to_string(index=True))
+		df_array.append(df.to_numpy())
 
-
+	print('\n\n*****************************')
+	print('Average Scores')
+	matrices = np.mean( np.array(df_array), axis=0 )
+	df_scores = pd.DataFrame(matrices,columns = ["Accuracy","Prec.","Recall","Fscore",],index=["Wait","Look","Wave","Handshake","General"])
+	print(standardize(df_scores))
+	print('\n*****************************')
+	print('Votation method\n')
+	print(human_anwers)
+	df = analytics(human_anwers,dqn_actions)
+	print(standardize(df).to_string(index=False))
 
 
 if __name__ == "__main__":

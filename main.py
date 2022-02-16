@@ -218,18 +218,20 @@ def main():
 			file=values['-INPUT-']
 			np.save(file, user_actions)
 
+		'''
 		if event == 'Y' or event == 'y':
 			window.FindElement('-YES-').Update(value=True)
 			#user_actions[step_image-1] = int(actions_ep[step_image-1][0])
 
 		if event == 'N' or event == 'n':
 			window.FindElement('-NO-').Update(value=True)
+		'''
 
 		if values["-YES-"]:
 			#handshake index
 			user_actions[step_image-1] = int(actions_ep[step_image-1][0])
 			
-
+		
 		if values["-NO-"]:
 			exclude_key = None
 			if(actions_ep[step_image-1][0]==dictAssets[lang['WAIT']]):
