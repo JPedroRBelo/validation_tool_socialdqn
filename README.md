@@ -16,7 +16,7 @@ source validation/bin/activate
 Git Clone:
 
 ```sh
-git clone git@github.com:JPedroBelo/validation_tool_socialdqn.git
+git clone git@github.com:JPedroRBelo/validation_tool_socialdqn.git
 cd validation_tool_socialdqn
 pip install -r requirements.txt 
 ```
@@ -26,7 +26,8 @@ pip install -r requirements.txt
 ```sh
 python main.py
 ```
-
 ## Validation Tool
 
-![alt text](https://github.com/JPedroBelo/mdqn-validation-tool/blob/main/doc/screen.gif)
+![alt text](https://github.com/JPedroRBelo/mdqn-validation-tool/blob/main/doc/screen.gif)
+
+
