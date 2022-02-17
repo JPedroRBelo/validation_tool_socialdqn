@@ -1,6 +1,6 @@
 import os
-lang = 'pt_br'
-#lang = 'en_us'
+#lang = 'pt_br'
+lang = 'en_us'
 
 
 
@@ -74,7 +74,7 @@ pt_br = {
     "PREV": "Voltar",
     "NEXT": "Próximo",
     "QUESTIONNAIRE":"Questionário",
-    "APPTITLE": "Social MDQN - Feramenta de Validação",
+    "APPTITLE": "SocialDQN - Feramenta de Validação",
     "STEP": "Interação: ",
     "INDEX": "Índice: ",
     "LABEL": "Resumo",
@@ -96,9 +96,9 @@ pt_br = {
 
 
 en_us = {
-    "DQNSELECTEDACTION": "DQN selected Action: ",
-    "AVATAREMOTION": "Human Avatar Emotion: ",
-    "DOYOUAGREE": "Do you agree with DQN?" ,  
+    "DQNSELECTEDACTION": "Robot selected Action:",
+    "AVATAREMOTION": "Human Emotion:         ",
+    "DOYOUAGREE": "Is this action acceptable in this scenario?" ,  
     "YES" : "Yes",
     "NO" : "No",    
     "CHOOSERIGHTACTION": "Choose the right Action",
@@ -109,18 +109,24 @@ en_us = {
     "PREV": "Prev.",
     "NEXT": "Next",
     "QUESTIONNAIRE":"Questionnaire",
-    "APPTITLE": "Social MDQN Validation tool",
+    "APPTITLE": "SocialDQN Validation tool",
     "STEP": "Step:",
     "INDEX": "Index: ",
     "LABEL": "Summary",
-    "ACTIONS": "Wait:\t\t do nothing.\nLook:\t\t look at person.\nWave:\t\t handwave wave to get attention.\nHandshake:\t try to start a handshaking.",
+    "EMOTION_LABEL": "Probability of human interacting",
+    "ACTIONS": "Wait:\t\t does nothing, looks in a random direction.\nLook:\t\t look or look for a person.\nWave:\t\t waves your hand to the nearest person. \nHandshake:\t tries to greet with a handshake.",
+    "EMOTIONS_HELP": "Happy: high probability of interaction\nSad: low probability of interaction.\nNeutral: Medium probability of interaction. \nUnknown: human not present in scene or face not visible.","SAVE": "Save",
     "SAVE": "Save",
     "LOAD": "Load",
     "RESET": "Reset",
     "SAVEPANEL": "File",
     "FILENAME": "Save as: ",
     "LOADFILE": "Load file: ",
-    "BROWSE": "Browse"
+    "BROWSE": "Browse",    
+    "NOFACE": "Unknown",
+    "NEUTRAL":"Neutral",
+    "POSITIVE":"Happy",
+    "NEGATIVE":"Sad"
 }
 
 

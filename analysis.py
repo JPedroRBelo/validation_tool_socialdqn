@@ -167,9 +167,11 @@ def main():
 	print(standardize(df_scores))
 	print('\n*****************************')
 	print('Votation method\n')
-	print(human_anwers)
+	print('#Answers: {}\n'.format(len(human_anwers)))
+
 	df = analytics(human_anwers,dqn_actions)
 	print(standardize(df).to_string(index=False))
+
 
 
 if __name__ == "__main__":
