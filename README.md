@@ -28,6 +28,6 @@ python main.py
 ```
 ## Validation Tool
 
-![alt text](https://github.com/JPedroRBelo/mdqn-validation-tool/blob/main/doc/screen.gif)
+![alt text](https://github.com/JPedroRBelo/validation_tool_socialdqn/blob/main/doc/screen.gif)
 
 
