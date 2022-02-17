@@ -9,7 +9,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_recall_fscore_support as score
 from sklearn.metrics import accuracy_score as a_score
 import pandas as pd
-import config as cfg
+import config.config as cfg
 
 folder = 'answers/'
 

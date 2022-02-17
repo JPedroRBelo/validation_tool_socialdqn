@@ -4,7 +4,7 @@ from PIL import Image
 import os
 import time
 import io
-import config as cfg
+import config.config as cfg
 
 #Change this at config.py file
 lang = cfg.languages[cfg.lang]
