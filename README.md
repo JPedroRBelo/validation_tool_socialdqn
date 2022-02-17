@@ -1,5 +1,5 @@
-# MDQN Validation Tool
-Qualitative Validation tool for PyMDQN, MDQN and SocialMDQN projects
+# SocialDQN Validation Tool
+Qualitative Validation tool for SocialDQN project.
 
 
 ## Instalation
