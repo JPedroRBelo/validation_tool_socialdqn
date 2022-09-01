@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-import config as cfg
+import config.config as cfg
 import os
 
 
@@ -8,8 +8,11 @@ import os
 def convert(file):
 	filename = os.path.join(cfg.dqn_files,file)
 	action_history=torch.load(filename)
+	print(action_history)
+	print('')
 	ep_history = action_history[cfg.ep-1]
 	filename = os.path.join(cfg.dqn_files,file.replace('.dat','.npy'))
+	print(ep_history)
 	np.save(filename, ep_history)
 
 def convert_one_hot_tensor(file):

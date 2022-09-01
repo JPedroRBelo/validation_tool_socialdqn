@@ -15,30 +15,21 @@ asset = [lang['WAIT'],lang['LOOK'],lang['WAVE'],lang['HANDSHAKE']]
 emot_asset = [lang['NOFACE'],lang['NEUTRAL'],lang['POSITIVE'],lang['NEGATIVE']]
 dictAssets = dict(zip(asset, range(len(asset))))
 
+
 n_steps = cfg.validation_size
 
 face = FaceDetection()
-
+new_database_name = "selected"
 
 def get_time():
 	return round(time.time() * 1000)
 
-def show_choose_menu(window,flag,exclude=None):
-	window['-TEXTCHOOSE-'].Update(visible=flag)
-	window['-WAIT-'].Update(visible=flag,disabled=False)
-	window['-LOOK-'].Update(visible=flag,disabled=False)
-	window['-WAVE-'].Update(visible=flag,disabled=False)
-	window['-HAND-'].Update(visible=flag,disabled=False)
-	if(exclude != None):
-		window[exclude].Update(disabled= flag)
+
 
 def clear_radion_selections(window):
 	window['-YES-'].Update(value=False)
 	window['-NO-'].Update(value=False)
-	window['-WAIT-'].Update(value=False)
-	window['-LOOK-'].Update(value=False)
-	window['-WAVE-'].Update(value=False)
-	window['-HAND-'].Update(value=False)
+
 
 
 def make_layout(sg):
@@ -62,8 +53,9 @@ def make_layout(sg):
 					[sg.Submit(lang['LOAD'],size=(29,1),key="-LOAD-",disabled=False)],
 					[sg.Sizer(50, 30)],
 					[sg.Text(lang['FILENAME']),
-					sg.Input(os.path.join(cfg.save_location,cfg.result_file+cfg.extension),size=(21,1),justification='left', key='-INPUT-')],
+					sg.Input(os.path.join(cfg.save_location,cfg.merge_file+cfg.extension),size=(21,1),justification='left', key='-INPUT-')],
 					[sg.Submit(lang['SAVE'],size=(29,1),key="-SAVE-",disabled=False)],
+					[sg.Submit('Generate',size=(29,1),key="-GENERATE-",disabled=False)],
 	]
 
 
@@ -72,14 +64,9 @@ def make_layout(sg):
 				layout=[
 					[sg.Text(lang['AVATAREMOTION']),sg.Text("",size=(20,1),key="-HUMANEMOTION-",text_color="white",background_color="blue",justification='c')],
 					[sg.Text(lang['DQNSELECTEDACTION']),sg.Text("",size=(20,1),key="-ROBOTACTION-",text_color="white",background_color="green",justification='c')],					
-					[sg.Text(lang['DOYOUAGREE'])],
+					
 					[sg.Radio(lang['YES'], "RADIOAGREE",key="-YES-", size=(10, 2))],						 
-					[sg.Radio(lang['NO'], "RADIOAGREE",key="-NO-")],
-					[sg.Text(lang['CHOOSERIGHTACTION'],key='-TEXTCHOOSE-',visible=True)],
-					[sg.Radio(lang['WAIT'], "RADIOCHOOSE",key="-WAIT-",visible=True)],						 
-					[sg.Radio(lang['LOOK'], "RADIOCHOOSE",key="-LOOK-", visible=True)],
-					[sg.Radio(lang['WAVE'], "RADIOCHOOSE",key="-WAVE-", visible=True)],						 
-					[sg.Radio(lang['HANDSHAKE'], "RADIOCHOOSE",key="-HAND-", visible=True)],
+					[sg.Radio(lang['NO'], "RADIOAGREE",key="-NO-")],				
 
 					[sg.Column(layout_column, element_justification='center')],				
 					[sg.Sizer(100, 55)]
@@ -145,7 +132,7 @@ def main():
 	window.bind('<Key-Left>', 'Left')
 
 	global n_steps
-	n_steps=min(len(actions_ep),n_steps)
+	n_steps=len(actions_ep)
 	#x = threading.Thread(target=update_window_image, args=(window,))
 	#x.start()
 	user_actions = np.ones(n_steps)*-1
@@ -159,7 +146,39 @@ def main():
 
 	while True:
 
+
+
 		event, values = window.read(timeout=cfg.image_update_time)	
+
+		if event == "-GENERATE-":
+
+			new_folder = os.path.join('dataset',new_database_name)
+			if(os.path.exists(new_folder)):
+				os.system('rm -rf '+new_folder)
+			os.mkdir(new_folder)
+			save_index = []	
+			new_actions_ep = []
+			new_emotion_ep = []
+			
+
+			for index in range(len(user_actions)):
+				if(user_actions[index]==1):
+					save_index.append(index)
+			print(len(save_index))		
+
+			count = 0
+			for value in save_index:
+				count += 1
+				new_actions_ep.append(actions_ep[value])
+				new_emotion_ep.append(emotion_ep[value])
+				for i in range(8):
+					new_name = os.path.join(new_folder,'gray'+str(count)+'_'+str(i)+'.png')
+					old_name = cfg.image_database+str(value+1)+'_'+str(i)+'.png'
+					os.system("cp "+old_name+" "+new_name)
+
+			np.save(os.path.join(new_folder,'action_reward_history.npy'),new_actions_ep)
+			np.save(os.path.join(new_folder,'social_signals_history.npy'),new_emotion_ep)
+			print("Generated!")
 		
 		if event == "Exit" or event == sg.WIN_CLOSED:
 			exit_thread = True
@@ -170,10 +189,12 @@ def main():
 
 		#disable NEXT/PREV buttons if nothing is selected
 		disabled_buttons = bool((user_actions[step_image-1]==cfg.NULL))
+		disabled_buttons = False
 
 		
 		window['-NEXT-'].Update(disabled=disabled_buttons)
 		disabled_buttons = bool((user_actions[step_image-1-1]==cfg.NULL))
+		disabled_buttons = False
 		window['-PREV-'].Update(disabled=disabled_buttons)
 
 		loadfile_test = os.path.isfile(values['-LOADINPUT-'])
@@ -201,23 +222,14 @@ def main():
 				step_image = 1
 				user_actions = np.load(values["-LOADINPUT-"])
 			
-			if(user_actions[step_image-1]==cfg.NULL):
+			if(user_actions[step_image-1]==1):
 				clear_radion_selections(window)
-				show_choose_menu(window,False)
-			elif(actions_ep[step_image-1][0]==user_actions[step_image-1]):
 				window['-YES-'].Update(value=True)
-				clear_radion_selections
 			else:
+				clear_radion_selections(window)
 				window['-NO-'].Update(value=True)
-				if(user_actions[step_image-1]==dictAssets[lang['WAIT']]):
-					window['-WAIT-'].Update(value=True)
-				elif(user_actions[step_image-1]==dictAssets[lang['LOOK']]):
-					window['-LOOK-'].Update(value=True)
-				elif(user_actions[step_image-1]==dictAssets[lang['WAVE']]):
-					window['-WAVE-'].Update(value=True)
-				elif(user_actions[step_image-1]==dictAssets[lang['HANDSHAKE']]):
-					window['-HAND-'].Update(value=True)
-			print(user_actions[step_image-1])
+
+			print(str(step_image)+": "+str(user_actions[step_image-1]))
 		if event == "-SAVE-":
 			file=values['-INPUT-']
 			np.save(file, user_actions)
@@ -233,48 +245,13 @@ def main():
 
 		if values["-YES-"]:
 			#handshake index
-			user_actions[step_image-1] = int(actions_ep[step_image-1][0])
+			user_actions[step_image-1] = 1
 			
 		
 		if values["-NO-"]:
-			exclude_key = None
-			if(actions_ep[step_image-1][0]==dictAssets[lang['WAIT']]):
-				exclude_key = '-WAIT-'
-			if(actions_ep[step_image-1][0]==dictAssets[lang['LOOK']]):
-				exclude_key = '-LOOK-'
-			if(actions_ep[step_image-1][0]==dictAssets[lang['WAVE']]):
-				exclude_key = '-WAVE-'
-			if(actions_ep[step_image-1][0]==dictAssets[lang['HANDSHAKE']]):
-				exclude_key = '-HAND-'
+			user_actions[step_image-1] = -1
 
-			show_choose_menu(window,True,exclude_key)
 
-			'''
-			if event == '1':
-				window['-WAIT-').Update(value=True)
-			if event == '2':
-				window['-LOOK-').Update(value=True)
-			if event == '3':
-				window['-WAVE-').Update(value=True)
-			if event == '4':
-				window['-HAND-').Update(value=True)
-			'''
-
-			if values["-WAIT-"]:
-				user_actions[step_image-1] = dictAssets[lang['WAIT']]
-			elif values["-LOOK-"]:
-				user_actions[step_image-1] = dictAssets[lang['LOOK']]
-			elif values["-WAVE-"]:
-				user_actions[step_image-1] = dictAssets[lang['WAVE']]
-			elif values["-HAND-"]:
-				user_actions[step_image-1] = dictAssets[lang['HANDSHAKE']]
-			else:
-				user_actions[step_image-1] = cfg.NULL
-		else:
-			show_choose_menu(window,False)
-			#handshake index
-		
-			#user_actions[step_image] =
 
 
 

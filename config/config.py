@@ -1,6 +1,6 @@
 import os
-#lang = 'pt_br'
-lang = 'en_us'
+lang = 'pt_br'
+#lang = 'en_us'
 
 
 
@@ -32,7 +32,7 @@ themes = [
 'Topanga']
 
 
-validation_size = 100
+validation_size = 150
 
 theme = 'Topanga'
 #theme = 'DarkAmber'
@@ -44,16 +44,36 @@ ep = 0
 prefix_name = 'gray'
 image_dir = 'ep'+str(ep)
 format_ext = '.png'
+mode = 'experiment'
+result_file = 'answr'
+merge_file = 'merge'
+extension = '.npy'
 
+image_ep='merged'
+
+
+image_ep = 'selected0730'
+
+
+
+#Treino parametros originais, probabilidades antigas
+#image_ep = 'selected0830'
 
 
 save_location = 'answers'
-dqn_files = os.path.join('dataset','scores')
-result_file = 'answr'
-extension = '.npy'
+if(mode =='experiment'):    
+    dqn_files = os.path.join('dataset',image_ep)
+    fullpath = os.path.join(dqn_files, prefix_name)
+    image_database = os.path.join('dataset',image_ep,prefix_name)
+else:
+    dqn_files = os.path.join('dataset','scores')
+    fullpath = os.path.join(dqn_files,image_dir, prefix_name)
+    image_database = os.path.join('dataset','images','2', prefix_name)
 
-fullpath = os.path.join(dqn_files,image_dir, prefix_name)
-image_database = os.path.join('dataset','images','2', prefix_name)
+
+
+
+#image_databese = os.path.join('dataset','13',)
 
 image_update_time = 100
 n_images = 8
@@ -90,8 +110,8 @@ pt_br = {
     "BROWSE": "Procurar",
     "NOFACE": "Desconhecida",
     "NEUTRAL":"Neutra",
-    "POSITIVE":"Feliz",
-    "NEGATIVE":"Triste"
+    "POSITIVE":"Positiva",
+    "NEGATIVE":"Negativa"
 }
 
 
