@@ -1,4 +1,10 @@
 dataset/*
+# exclude everything
+answers/*
+
+# exception to the rule
+!answers/.gitkeep 
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
