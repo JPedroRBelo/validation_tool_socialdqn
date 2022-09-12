@@ -1,6 +1,9 @@
 dataset/*
+dataset1/*
 # exclude everything
 answers/*
+
+dataset.zip
 
 # exception to the rule
 !answers/.gitkeep 
