@@ -31,9 +31,9 @@ themes = [
 'DarkBlack',
 'Topanga']
 
-answer_default_folder = 'mdqn'
+answer_default_folder = 'real'
 
-validation_size = 100
+validation_size = 150
 
 theme = 'Topanga'
 #theme = 'DarkAmber'
@@ -51,9 +51,8 @@ merge_file = 'merge'
 extension = '.npy'
 
 #Real
-#image_ep='selected0830'
+image_ep='real'
 
-image_ep='mdqn100'
 
 #image_ep = 'selected0730'
 

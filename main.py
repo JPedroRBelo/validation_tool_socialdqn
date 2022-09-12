@@ -4,20 +4,14 @@ from PIL import Image
 import os
 import time
 import io
-import config.config as cfg
-from utils.face_info import FaceDetection
+import config.config as dcfg
+import sys
+import gdown
+import zipfile
+
 
 #Change this at config.py file
-lang = cfg.languages[cfg.lang]
-
-
-asset = [lang['WAIT'],lang['LOOK'],lang['WAVE'],lang['HANDSHAKE']]
-emot_asset = [lang['NOFACE'],lang['NEUTRAL'],lang['POSITIVE'],lang['NEGATIVE']]
-dictAssets = dict(zip(asset, range(len(asset))))
-
-n_steps = cfg.validation_size
-
-face = FaceDetection()
+lang = dcfg.languages[dcfg.lang]
 
 
 def get_time():
@@ -41,7 +35,7 @@ def clear_radion_selections(window):
 	window['-HAND-'].Update(value=False)
 
 
-def make_layout(sg):
+def make_layout(sg,cfg):
 
 	panel_file2 = 	[sg.Submit(lang['SAVE'],key="-SAVE-",disabled=False)]
 				
@@ -124,14 +118,23 @@ def make_layout(sg):
 	window = sg.Window(lang['APPTITLE'], layout,size=(1024, 768),finalize=True)
 	return window
 
-def main():
+def main(cfg):
 	sg.theme(cfg.theme)
+	global lang
+	lang = cfg.languages[cfg.lang]
+	asset = [lang['WAIT'],lang['LOOK'],lang['WAVE'],lang['HANDSHAKE']]
+	emot_asset = [lang['NOFACE'],lang['NEUTRAL'],lang['POSITIVE'],lang['NEGATIVE']]
+	dictAssets = dict(zip(asset, range(len(asset))))
+
+	n_steps = cfg.validation_size
 	emotions = []
 	actions_ep=np.load(cfg.dqn_files+'/action_reward_history.npy')
 	emotion_ep=np.load(cfg.dqn_files+'/social_signals_history.npy')
 	print(emotion_ep)
+	keyboard_activate = False
 
-	window = make_layout(sg)
+	window = make_layout(sg,cfg)
+
 	window.bind('<Key-Y>', 'Y')
 	window.bind('<Key-y>', 'y')
 	window.bind('<Key-N>', 'N')
@@ -144,7 +147,7 @@ def main():
 	window.bind('<Key-Right>', 'Right')
 	window.bind('<Key-Left>', 'Left')
 
-	global n_steps
+
 	n_steps=min(len(actions_ep),n_steps)
 	#x = threading.Thread(target=update_window_image, args=(window,))
 	#x.start()
@@ -154,7 +157,6 @@ def main():
 	index_image = 1
 	exit_thread = False
 
-	#file_
 
 
 	while True:
@@ -222,14 +224,23 @@ def main():
 			file=values['-INPUT-']
 			np.save(file, user_actions)
 
-		'''
-		if event == 'Y' or event == 'y':
-			window['-YES-').Update(value=True)
-			#user_actions[step_image-1] = int(actions_ep[step_image-1][0])
 
-		if event == 'N' or event == 'n':
-			window['-NO-').Update(value=True)
-		'''
+		if event == 'F5':
+
+			keyboard_activate = not keyboard_activate
+			print('shortcuts activated: '+str(keyboard_activate))
+
+
+		if(keyboard_activate):
+			if event == 'Y' or event == 'y':
+				window['-YES-'].Update(value=True)
+				#user_actions[step_image-1] = int(actions_ep[step_image-1][0])
+
+			if event == 'N' or event == 'n':
+				window['-NO-'].Update(value=True)
+		
+
+
 
 		if values["-YES-"]:
 			#handshake index
@@ -249,16 +260,16 @@ def main():
 
 			show_choose_menu(window,True,exclude_key)
 
-			'''
-			if event == '1':
-				window['-WAIT-').Update(value=True)
-			if event == '2':
-				window['-LOOK-').Update(value=True)
-			if event == '3':
-				window['-WAVE-').Update(value=True)
-			if event == '4':
-				window['-HAND-').Update(value=True)
-			'''
+			if(keyboard_activate):
+				if event == '1':
+					window['-WAIT-'].Update(value=True)
+				if event == '2':
+					window['-LOOK-'].Update(value=True)
+				if event == '3':
+					window['-WAVE-'].Update(value=True)
+				if event == '4':
+					window['-HAND-'].Update(value=True)
+			
 
 			if values["-WAIT-"]:
 				user_actions[step_image-1] = dictAssets[lang['WAIT']]
@@ -290,8 +301,7 @@ def main():
 			if os.path.exists(filename):
 
 				image = Image.open(filename)
-				#emotion = face.recognize_face_emotion(image=image,preprocess='adaptative',save_path='')
-				#emotions.append(emotion)
+
 				image = image.resize((640, 480), Image.ANTIALIAS)
 				#image.thumbnail((640, 480))
 				bio = io.BytesIO()
@@ -300,9 +310,6 @@ def main():
 				window["-NAMEIMAGE-"].update(lang["STEP"]+' '+str(step_image)+' - '+lang["INDEX"]+' '+str(index_image))
 			# apply mod to keep index betw. 0 and 7; sum up 1
 			index_image = ((index_image+1)%(cfg.n_images))
-			#if(index_image==7):
-			#	emotion = face.choose_emotion_by_conf(emotions)
-			#	print(emotion)
 			last_update_time = get_time()
 
 		
@@ -311,4 +318,20 @@ def main():
 
 
 if __name__ == "__main__":
-	main()
+
+	file_zip = 'dataset.zip'
+	with zipfile.ZipFile(file_zip, 'r') as zip_ref:
+		zip_ref.extractall('')
+
+	if(len(sys.argv)>1):
+		if(sys.argv[1]=='mdqn'):
+			import config.configMdqn as cfg
+			main(cfg)
+		elif(sys.argv[1]=='real'):
+			import config.configReal as cfg
+			main(cfg)
+		else:
+			print('Parameter error...'+str(sys.argv[1]))
+	else:
+		main(dcfg)
+	

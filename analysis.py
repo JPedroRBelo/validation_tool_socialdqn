@@ -138,7 +138,11 @@ def main():
 
 	#dqn_actions = np.load('mdqn/results2/ep'+str(ep)+'/action_history.npy')
 	if(alg=='greedy'):
-		dqn_actions = np.load('dataset/scores/100_action_reward_history.npy')
+		#dataset_location = os.path.join('dataset','selected0830','action_reward_history.npy')
+		dataset_location = os.path.join('dataset',cfg.image_ep,'action_reward_history.npy')
+		dqn_actions = np.load(dataset_location)
+
+
 	elif(alg=='noemotion'):
 		dqn_actions = np.load('dataset/scores/test_action_reward_history.npy')
 	else:

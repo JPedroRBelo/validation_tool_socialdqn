@@ -31,8 +31,9 @@ themes = [
 'DarkBlack',
 'Topanga']
 
+answer_default_folder = 'default'
 
-validation_size = 150
+validation_size = 100
 
 theme = 'Topanga'
 #theme = 'DarkAmber'
@@ -49,10 +50,12 @@ result_file = 'answr'
 merge_file = 'merge'
 extension = '.npy'
 
-image_ep='merged'
+#Real
+#image_ep='selected0830'
 
+image_ep='mdqn100'
 
-image_ep = 'selected0730'
+#image_ep = 'selected0730'
 
 
 
@@ -60,7 +63,7 @@ image_ep = 'selected0730'
 #image_ep = 'selected0830'
 
 
-save_location = 'answers'
+save_location = os.path.join('answers',answer_default_folder)
 if(mode =='experiment'):    
     dqn_files = os.path.join('dataset',image_ep)
     fullpath = os.path.join(dqn_files, prefix_name)
@@ -69,7 +72,6 @@ else:
     dqn_files = os.path.join('dataset','scores')
     fullpath = os.path.join(dqn_files,image_dir, prefix_name)
     image_database = os.path.join('dataset','images','2', prefix_name)
-
 
 
 

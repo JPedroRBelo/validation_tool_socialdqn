@@ -19,7 +19,7 @@ dictAssets = dict(zip(asset, range(len(asset))))
 n_steps = cfg.validation_size
 
 face = FaceDetection()
-new_database_name = "selected"
+new_database_name = "selected0830"
 
 def get_time():
 	return round(time.time() * 1000)

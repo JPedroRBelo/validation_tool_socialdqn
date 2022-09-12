@@ -7,13 +7,13 @@ import io
 import collections
 from sklearn.metrics import confusion_matrix
 import random
-import config as cfg
+import config.config as cfg
 
 
 folder = 'answers/'
 
+#images_folder = os.path.join('dataset',cfg.image_ep)
 
-dqn_actions = np.load('dataset/scores/action_reward_history.npy')
 assets = ['Wait','Look','Wave','Handshake','None']
 
 
@@ -34,17 +34,21 @@ def accuracy(success,fail):
     else:
         return 0
 
-lenn = cfg.validation_size
-factor = lenn/100
 
-probs = [0.1008*factor,0.3246*factor,0.1968*factor,0.5319*factor]
+
+
+
+
 
 def calc(dqn_actions):
-
+    lenn = cfg.validation_size
+    factor = lenn/120
+    #probs = [0.1008*factor,0.3246*factor,0.1968*factor,0.5319*factor]
+    probs = [0.75*factor,0.25*factor,0.1*factor,0.25*factor]
     while(True):
         actions_ep=np.load(cfg.dqn_files+'/action_reward_history.npy')
         emotion_ep=np.load(cfg.dqn_files+'/social_signals_history.npy')
-        an1=np.load(folder+'answr500.npy')   
+        an1=np.load(os.path.join(folder,cfg.answer_default_folder)+'/answr500.npy')   
         an1 = an1[:-1]
         selected = []
         new_action_reward = []
@@ -68,7 +72,7 @@ def calc(dqn_actions):
 
             if(aux>=0):
                 selected.append(aux)
-
+        print(len(selected))
         if(len(selected)>=lenn):
             break
 
@@ -85,19 +89,19 @@ def calc(dqn_actions):
             new_action_reward.append(actions_ep[index])
             new_emotion_ep.append(emotion_ep[index])
             new_human_answer.append(an1[index])
-            image_database = os.path.join('dataset','images','2')  
+            image_database = os.path.join('dataset','new'+str(cfg.image_ep))  
             if not os.path.exists(image_database):
                 os.makedirs(image_database)
             for j in range(cfg.n_images):
                 import shutil
 
                 #make a copy of the invoice to work with
-                src=os.path.join('dataset','images','1',cfg.prefix_name+str(index+1)+"_"+str(j)+cfg.format_ext)
+                src=os.path.join(cfg.dqn_files,cfg.prefix_name+str(index+1)+"_"+str(j)+cfg.format_ext)
                 dst=os.path.join(image_database,cfg.prefix_name+str(i+1)+"_"+str(j)+cfg.format_ext)
                 shutil.copy(src,dst)
-        np.save('dataset/scores/100_action_reward_history.npy',new_action_reward)
-        np.save('dataset/scores/100_social_signals_history.npy',new_emotion_ep)
-        np.save('answers/100_answers.npy',new_human_answer)
+        np.save(os.path.join('dataset','new'+str(cfg.image_ep),'action_reward_history.npy'),new_action_reward)
+        np.save(os.path.join('dataset','new'+str(cfg.image_ep),'social_signals_history.npy'),new_emotion_ep)
+        np.save(os.path.join('answers',cfg.answer_default_folder,' 100_answers.npy'),new_human_answer)
 
         print(len(new_human_answer))
 
@@ -113,9 +117,9 @@ def calc(dqn_actions):
 
 
 def main():
-
     #dqn_actions = np.load('mdqn/results2/ep'+str(ep)+'/action_history.npy')
-    dqn_actions = np.load('dataset/scores/action_reward_history.npy')
+    #dqn_actions = np.load('dataset/scores/action_reward_history.npy')
+    dqn_actions = np.load(os.path.join(cfg.dqn_files,'action_reward_history.npy'))
     calc(dqn_actions)
 
 
