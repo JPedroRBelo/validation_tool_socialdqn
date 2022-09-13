@@ -6,7 +6,6 @@ import time
 import io
 import config.config as dcfg
 import sys
-import gdown
 import zipfile
 
 
