@@ -53,7 +53,7 @@ extension = '.npy'
 #Real
 #image_ep='selected0830'
 
-image_ep='mdqn100'
+image_ep='mdqn'
 
 #image_ep = 'selected0730'
 
@@ -101,8 +101,8 @@ pt_br = {
     "INDEX": "Índice: ",
     "LABEL": "Resumo",
     "EMOTION_LABEL": "Probabilidade do humano interagir",
-    "ACTIONS": "Esperar:\t\t não faz nada, olha para direção aleatória.\nOlhar:\t\t olhar ou procurar por um pessoa.\nAcenar:\t\t acena com a mão para pessoa mais próxima.\nCumprimentar:\t tenta cumprimentar com um aperto de mão.",
-    "EMOTIONS_HELP": "Feliz: alta probabilidade de interação\nTriste: pouca probabilidade de interação.\nNeutra: Probabilidade de interação média. \nDesconhecida: humano não presente na cena ou rosto não visível.",
+    "ACTIONS": "Esperar:\t não faz nada, olha para direção aleatória.\nOlhar:\t\t olhar ou procurar por um pessoa.\nAcenar:\t\t acena com a mão para pessoa mais próxima.\nCumprimentar:\t tenta cumprimentar com um aperto de mão.",
+    "EMOTIONS_HELP": "Positiva: alta probabilidade de interação\nNegativa: pouca probabilidade de interação.\nNeutra: Probabilidade de interação média. \nDesconhecida: humano não presente na cena ou rosto não visível.",
     "FILENAME": "Salvar como: ",
     "SAVE": "Salvar",
     "LOAD": "Carregar",

@@ -129,7 +129,7 @@ def main(cfg):
 	emotions = []
 	actions_ep=np.load(cfg.dqn_files+'/action_reward_history.npy')
 	emotion_ep=np.load(cfg.dqn_files+'/social_signals_history.npy')
-	print(emotion_ep)
+
 	keyboard_activate = False
 
 	window = make_layout(sg,cfg)
@@ -227,7 +227,6 @@ def main(cfg):
 		if event == 'F5':
 
 			keyboard_activate = not keyboard_activate
-			print('shortcuts activated: '+str(keyboard_activate))
 
 
 		if(keyboard_activate):
