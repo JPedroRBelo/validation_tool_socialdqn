@@ -7,6 +7,7 @@ Qualitative Validation tool for SocialDQN project.
 (Optional) Environment setup:
 
 ```sh
+sudo apt-get install python3-pip
 python3 -m pip install --user --upgrade pip
 python3 -m pip install --user validation
 python3 -m venv validation
