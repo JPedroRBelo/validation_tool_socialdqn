@@ -20,7 +20,8 @@ Git Clone:
 ```sh
 git clone git@github.com:JPedroRBelo/validation_tool_socialdqn.git
 cd validation_tool_socialdqn
-pip install -r requirements.txt 
+pip install -r requirements.txt
+sudo apt-get install python3-tk
 ```
 
 ## Running 
