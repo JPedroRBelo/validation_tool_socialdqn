@@ -9,9 +9,10 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_recall_fscore_support as score
 from sklearn.metrics import accuracy_score as a_score
 import pandas as pd
-import config.config as cfg
 
-folder = 'answers/'
+import sys
+
+
 
 
 #dqn_actions = np.load('dataset/scores/action_reward_history.npy')
@@ -20,6 +21,7 @@ assets = ['Wait','Look','Wave','Handshake','None']
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process command line arguments.')
     parser.add_argument('-a','--alg',default='greedy')
+    parser.add_argument('-t','--test',default='')
     return parser.parse_args()
 def action(*args):
 	actions = []
@@ -39,9 +41,7 @@ def accuracy(success,fail):
 		return 0
 
 
-
-
-def calc(dqn_actions,human_actions):
+def calc(dqn_actions,human_actions,cfg):
 
 	size = cfg.validation_size
 	human_anwers = np.transpose(human_actions)
@@ -69,12 +69,12 @@ def padronizar(listdf):
 	aux_df = [ '%.2f%%' % element for element in aux_df ]
 	return aux_df
 
-def analytics(human_anwers,dqn_actions,debug=False):
+def analytics(human_anwers,dqn_actions,cfg,debug=False):
 
 
 
 	#wt_acc, lk_acc, wv_acc, hs_acc, geral_acc,true_label,pred_label = calc(dqn_actions)
-	true_label,pred_label = calc(dqn_actions,human_anwers)
+	true_label,pred_label = calc(dqn_actions,human_anwers,cfg)
 
 
 
@@ -133,8 +133,18 @@ def standardize(df):
 def main():
 	arguments = parse_arguments()
 	alg = arguments.alg
+	test = arguments.test
+	sub_folder = test
+	if test =='mdqn':
+		import config.configMdqn as cfg
+	elif test == 'real':
+		import config.configReal as cfg
+	else:
+		import config.config as cfg
+		sub_folder = ''
 	size = cfg.validation_size
 
+	folder = os.path.join('answers',sub_folder)
 
 	#dqn_actions = np.load('mdqn/results2/ep'+str(ep)+'/action_history.npy')
 	if(alg=='greedy'):
@@ -160,7 +170,7 @@ def main():
 		print('\n*****************************')
 		print(hf)
 		print('*****')
-		df = analytics(ha,dqn_actions,debug=True)
+		df = analytics(ha,dqn_actions,cfg,debug=True)
 		print(df.to_string(index=True))
 		df_array.append(df.to_numpy())
 
@@ -173,7 +183,7 @@ def main():
 	print('Votation method\n')
 	print('#Answers: {}\n'.format(len(human_anwers)))
 
-	df = analytics(human_anwers,dqn_actions)
+	df = analytics(human_anwers,dqn_actions,cfg)
 	print(standardize(df).to_string(index=False))
 
 
