@@ -139,6 +139,8 @@ def main():
 		import config.configMdqn as cfg
 	elif test == 'real':
 		import config.configReal as cfg
+	elif test == 'socialdqn':
+		import config.configSocialdqn as cfg
 	else:
 		import config.config as cfg
 		sub_folder = ''
