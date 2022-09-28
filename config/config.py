@@ -53,7 +53,7 @@ extension = '.npy'
 #Real
 #image_ep='selected0830'
 
-image_ep='mdqn'
+image_ep='socialdqn'
 
 #image_ep = 'selected0730'
 
